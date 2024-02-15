@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Monitorización de Servidores{% endblock %}</title>
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="wrapper"> 
+        <div id="header"> 
+            <div class="top_banner">
+                <h1>Monitorización de Servidores</h1>
+            </div>
+        </div>
+
+        <div id="page_content">
+            <div class="navigation">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Devices</a></li>
+                </ul>
+            </div>
+            <div class="content">
+                <div class="left_side_bar"> 
+                    <div class="col_1">
+                        <h1>Main Menu</h1>
+                        <div class="box">
+                            {% block left_content %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+                <div class="right_side">
+                    {% block right_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="addServersModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h5 class="modal-title">Añadir Servidor</h5>
+            <div class="modal-body">
+                <form method="post">
+                    {{ form.hidden_tag() }}
+                    {{ form.Nombre.label }}: {{ form.Nombre() }}<br>
+                    {{ form.IP.label }}: {{ form.IP() }}<br>
+                    {{ form.submit() }}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        setTimeout(function(){
+            location.reload();
+        }, 100000);
+
+        var modal = document.getElementById("addServersModal");
+
+        function openModal() {
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    </script>
+</body>
+</html>
