@@ -101,7 +101,12 @@
                   {% endfor %}
               </ul>
             </div>
-
+            <div>
+              <p><strong>Nombre servidor:</strong> {{ nombre_servidor }}</p>
+              <p><strong>Marca servidor:</strong> {{ marca_servidor }}</p>
+              <p><strong>Modelo servidor:</strong> {{ modelo_servidor }}</p>
+              <p><strong>Version BIOS:</strong> {{ bios_version }}</p>
+            </div>
             <a href="{{ url_for('index') }}">Volver al inicio</a>
           </div>
           </div>

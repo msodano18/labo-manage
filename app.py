@@ -204,6 +204,19 @@ def server_details(servers_id):
             servicios = "Error al conectar con el servidor o ejecutar el comando."
 
         interfaces = obtener_interfaces(server.IP, server.usuario_ssh, server.contrasena_ssh)
+
+        nombre_servidor = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'hostname')
+        nombre_servidor = nombre_servidor.decode('utf-8')
+
+        marca_servidor = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "System Information" | grep -i "Manufacturer" | awk -F\': \' \'{print $2}\'')
+        marca_servidor = marca_servidor.decode('utf-8')
+
+        modelo_servidor = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "System Information" | grep -i "Product Name" | awk -F\': \' \'{print $2}\'')
+        modelo_servidor = modelo_servidor.decode('utf-8')
+
+        bios_version = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "BIOS Information" | grep -i "version" | awk -F\': \' \'{print $2}\'')
+        bios_version = bios_version.decode('utf-8')
+        
         return render_template(
             'details.html', 
             server=server, 
@@ -212,7 +225,11 @@ def server_details(servers_id):
             ping_statuses=ping_statuses,
             sistemaOperativo=sistemaOperativo,
             servicios=servicios,
-            interfaces=interfaces
+            interfaces=interfaces,
+            nombre_servidor=nombre_servidor,
+            marca_servidor=marca_servidor,
+            modelo_servidor=modelo_servidor,
+            bios_version=bios_version
         )
 
 @app.route('/manage_service/<int:servers_id>/<string:service>/<string:action>', methods=['POST'])
