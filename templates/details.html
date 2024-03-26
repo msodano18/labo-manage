@@ -62,55 +62,101 @@
                 <div id="boxOff"><p id="offDate"><b>Última vez en OFF: </b></p>{{ server.last_offline.strftime('%Y-%m-%d %H:%M:%S') if server.last_offline else 'Sin registro' }}</p></div>
               </div>
             </div>
-            <strong>Servicios</strong>
-          <div id="servicios">
-              {% if servicios is string %}
-                  <pre>{{ servicios }}</pre>
-              {% else %}
+            <div id="center-content">
+              <div id="left-center-content">
+                <strong>Interfaces de Red</strong>
+                <div>
                   <ul>
-                      {% for servicio in servicios %}
+                      {% for interfaz in interfaces %}
                           <li>
-                            <div id="service_space">
-                              <div>
-                                <span style="background-color: {{ servicio.color }};" id="service-status"><b>{{ servicio.estado }}</b></span> {{ servicio.nombre }}
+                              <div id="networkInterfaces">
+                                <div><p><b>{{ interfaz.nombre }}:</b> {{ interfaz.ip }}</p></div>
+                                <div>
+                                  <button onclick="cambiarIP('{{ server.id }}', '{{ interfaz.nombre }}')" id="boton_ip">Cambiar IP</button>
+                                  <button onclick="cambiarInterfaceName('{{ server.id }}', '{{ interfaz.nombre }}')" id="boton_ip">Cambiar Nombre Interfaz</button>
+                                </div>
                               </div>
-                              <div>
-                                <button onclick="manageService('{{ server.id }}', '{{ servicio.nombre }}', 'start')" id="boton_service">START</button>
-                                <button onclick="manageService('{{ server.id }}', '{{ servicio.nombre }}', 'stop')" id="boton_service">STOP</button>
-                                <button onclick="manageService('{{ server.id }}', '{{ servicio.nombre }}', 'restart')" id="boton_service">RESTART</button>
-                              </div>
-                            </div>
                           </li>
                       {% endfor %}
                   </ul>
-              {% endif %}
-            </div>
-            <strong>Interfaces de Red</strong>
-            <div>
-              <ul>
-                  {% for interfaz in interfaces %}
-                      <li>
-                          <div id="networkInterfaces">
-                            <div><p><b>{{ interfaz.nombre }}:</b> {{ interfaz.ip }}</p></div>
-                            <div>
-                              <button onclick="cambiarIP('{{ server.id }}', '{{ interfaz.nombre }}')" id="boton_ip">Cambiar IP</button>
-                              <button onclick="cambiarInterfaceName('{{ server.id }}', '{{ interfaz.nombre }}')" id="boton_ip">Cambiar Nombre Interfaz</button>
-                            </div>
-                          </div>
-                      </li>
-                  {% endfor %}
-              </ul>
-            </div>
-            <div>
-              <p><strong>Nombre servidor:</strong> {{ nombre_servidor }}</p>
-              <p><strong>Marca servidor:</strong> {{ marca_servidor }}</p>
-              <p><strong>Modelo servidor:</strong> {{ modelo_servidor }}</p>
-              <p><strong>Version BIOS:</strong> {{ bios_version }}</p>
+                </div>
+                <div class="toggle-list" id="toggle-list">
+                  <div class="toggle-list-header" id="toggle-list-header" onclick="toggleList()"><span>▶</span><h3>Información del servidor</h3></div>
+                  <div class="toggle-list-items" id="toggle-list-items">
+                      <div><p><strong>Nombre servidor:</strong> {{ nombre_servidor }}</p></div>
+                      <div><p><strong>Marca servidor:</strong> {{ marca_servidor }}</p></div>
+                      <div><p><strong>Modelo servidor:</strong> {{ modelo_servidor }}</p></div>
+                      <div><p><strong>Version BIOS:</strong> {{ bios_version }}</p></div>
+                  </div>
+                </div>
+                <div class="toggle-list1" id="toggle-list">
+                  <div class="toggle-list-header1" id="toggle-list-header" onclick="toggleList1()"><span>▶</span><h3>CPU</h3></div>
+                  <div class="toggle-list-items1" id="toggle-list-items" >
+                      <div><p><strong>Nombre CPU:</strong> {{ cpu_name }}</p></div>
+                      <div><p><strong>Nucleos:</strong> {{ cpu_cores }}</p></div>
+                  </div>
+                </div>
+                <div class="toggle-list2" id="toggle-list">
+                  <div class="toggle-list-header2" id="toggle-list-header" onclick="toggleList2()"><span>▶</span><h3>GPU</h3></div>
+                  <div class="toggle-list-items2" id="toggle-list-items" >
+                    <div><p><strong>Modelo GPU:</strong> {{ gpu_name }}</p></div>
+                  </div>
+                </div>
+                <div class="toggle-list3" id="toggle-list">
+                  <div class="toggle-list-header3" id="toggle-list-header" onclick="toggleList3()"><span>▶</span><h3>RAM</h3></div>
+                  <div class="toggle-list-items3" id="toggle-list-items" >
+                    <div><p><strong>Tipo:</strong> {{ ram_type }}</p></div>
+                    <div><p><strong>Capacidad:</strong> {{ ram_cap }}</p></div>
+                    <div><p><strong>En uso:</strong> {{ ram_in_use }}</p></div>
+                    <div><p><strong>Libre:</strong> {{ ram_free }}</p></div>
+                  </div>
+                </div>
+                <div class="toggle-list4" id="toggle-list">
+                  <div class="toggle-list-header4" id="toggle-list-header" onclick="toggleList4()"><span>▶</span><h3>Base Board</h3></div>
+                  <div class="toggle-list-items4" id="toggle-list-items" >
+                    <div><p><strong>Marca:</strong> {{ mboard_name }}</p></div>
+                    <div><p><strong>Modelo:</strong> {{ mboard_model }}</p></div>
+                  </div>
+                </div>
+                <div class="toggle-list5" id="toggle-list">
+                  <div class="toggle-list-header5" id="toggle-list-header" onclick="toggleList5()"><span>▶</span><h3>Ventilación</h3></div>
+                  <div class="toggle-list-items5" id="toggle-list-items" >
+                    <div><p><strong>Tipo de ventilación:</strong> {{ ventilation_type }}</p></div>
+                    <div><p><strong>Velocidad:</strong> {{ programmed_speed }}</p></div>
+                    <div><p><strong>Estado:</strong> {{ ventilation_status }}</p></div>
+                  </div>
+                </div>
+              </div>
+              <div class="right-center-content">
+                <strong>Servicios</strong>
+                <div id="servicios">
+                  {% if servicios is string %}
+                      <pre>{{ servicios }}</pre>
+                  {% else %}
+                      <ul class="service-list">
+                          {% for servicio in servicios %}
+                              <li>
+                                <div id="service_space">
+                                  <div id="service-name">
+                                    <span style="color: {{ servicio.color }};" id="service-status"><b>{{ servicio.estado }}</b></span><p> {{ servicio.nombre }}</p>
+                                  </div>
+                                  <div id="service-manage">
+                                    <button onclick="manageService('{{ server.id }}', '{{ servicio.nombre }}', 'start')" id="boton_service">▶</button>
+                                    <button onclick="manageService('{{ server.id }}', '{{ servicio.nombre }}', 'stop')" id="boton_service">❚❚</button>
+                                    <button onclick="manageService('{{ server.id }}', '{{ servicio.nombre }}', 'restart')" id="boton_service">↺</button>
+                                  </div>
+                                </div>
+                              </li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+                </div>  
+              </div>
             </div>
             <a href="{{ url_for('index') }}">Volver al inicio</a>
           </div>
-          </div>
         </div>
+      </div>
 
       
         <div class="modal" id="addServersModal">
@@ -296,7 +342,83 @@
                 }
             });
         });
+      function toggleList() {
+        var items = document.querySelector(".toggle-list-items");
+        var header = document.querySelector(".toggle-list-header span");
 
+        if (items.style.display === "none" || items.style.display === "") {
+            items.style.display = "block";
+            header.innerHTML = "▼";
+        } else {
+            items.style.display = "none";
+            header.innerHTML = "▶";
+        }
+      }
+      function toggleList1() {
+        var items = document.querySelector(".toggle-list-items1");
+        var header = document.querySelector(".toggle-list-header1 span");
+
+        if (items.style.display === "none" || items.style.display === "") {
+            items.style.display = "block";
+            header.innerHTML = "▼";
+        } else {
+            items.style.display = "none";
+            header.innerHTML = "▶";
+        }
+        
+      }
+      function toggleList2() {
+        var items = document.querySelector(".toggle-list-items2");
+        var header = document.querySelector(".toggle-list-header2 span");
+
+        if (items.style.display === "none" || items.style.display === "") {
+            items.style.display = "block";
+            header.innerHTML = "▼";
+        } else {
+            items.style.display = "none";
+            header.innerHTML = "▶";
+        }
+        
+      }
+      function toggleList3() {
+        var items = document.querySelector(".toggle-list-items3");
+        var header = document.querySelector(".toggle-list-header3 span");
+
+        if (items.style.display === "none" || items.style.display === "") {
+            items.style.display = "block";
+            header.innerHTML = "▼";
+        } else {
+            items.style.display = "none";
+            header.innerHTML = "▶";
+        }
+        
+      }
+      function toggleList4() {
+        var items = document.querySelector(".toggle-list-items4");
+        var header = document.querySelector(".toggle-list-header4 span");
+
+        if (items.style.display === "none" || items.style.display === "") {
+            items.style.display = "block";
+            header.innerHTML = "▼";
+        } else {
+            items.style.display = "none";
+            header.innerHTML = "▶";
+        }
+        
+      }
+      function toggleList5() {
+        var items = document.querySelector(".toggle-list-items5");
+        var header = document.querySelector(".toggle-list-header5 span");
+
+        if (items.style.display === "none" || items.style.display === "") {
+            items.style.display = "block";
+            header.innerHTML = "▼";
+        } else {
+            items.style.display = "none";
+            header.innerHTML = "▶";
+        }
+        
+      }
 </script>
 
     </script>

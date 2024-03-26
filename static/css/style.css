@@ -9,10 +9,6 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 	background:none;
 }
 
-ol, ul {
-	list-style-type:none;
-}
-
 h1, h2, h3, h4, h5, h6, li {
 	line-height:100%;
 }
@@ -90,14 +86,6 @@ h6 {
 	******************************/
 	sup, sub {vertical-align: baseline;position: relative;top: -0.4em;}
 	sub { top: 0.4em; }
-	
-	/*  lists
-	******************************/
-	ul, ol {padding:0;margin:0;}
-	ul li {list-style-type:disc;}
-	ol li {list-style-type:decimal;}
-	ul li,
-	ol li {font-size: 12px; line-height: 16px;margin: 0 0 10px 15px;}
 
 	/*  tables
 	******************************/
@@ -384,17 +372,34 @@ h6 {
 	border: none; 
 	color: white;
 	background-color: #868B8F; 
-	padding: 7px 10px; 
+	padding: 5px 5px; 
 	cursor: pointer; 
-	border-radius: 5px; 
+	border-radius: 7px;
+	margin-left: 2px;
 }
 #boton_service:hover{
-	background-color: #363839; 
+	background-color: #363839;
+}
+.service-list{
+	list-style-type: none;
 }
 #service_space{
 	display: flex;
 	justify-content: space-between;
-	padding-right: 35%;
+	margin-bottom: 2px;
+}
+#service_space p{
+	font-size: 12px;
+	padding-top: 5px;
+}
+#service-name{
+	display: flex;
+	justify-content: center;
+	margin-right: 15px;
+}
+#service-manage{
+	display: flex;
+	justify-content: center;
 }
 #top-page{
 	display: flex;
@@ -475,9 +480,23 @@ h6 {
 #networkInterfaces{
 	display: flex;
 	justify-content: space-between;
-	padding-right: 45%;
+	padding-right: 10px;
+	margin-bottom: 10px;
+}
+#toggle-list-items{
+    display: none;
 }
 
+#toggle-list-header{
+    display: flex;
+    cursor: pointer; 
+}
 
-
+#center-content{
+	display: flex;
+	justify-content: space-between;
+}
+#left-center-content{
+	width: 60%;
+}
 /*----end footer content----*/

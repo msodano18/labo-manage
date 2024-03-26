@@ -71,10 +71,10 @@ def procesar_servicios(output):
     servicios = []
     for line in output.split('\n'):
         if '[ + ]' in line:
-            estado = 'OK'
+            estado = '⬤'
             color = 'green'
         elif '[ - ]' in line:
-            estado = 'BAD'
+            estado = '⬤'
             color = 'red'
         else:
             continue
@@ -205,18 +205,135 @@ def server_details(servers_id):
 
         interfaces = obtener_interfaces(server.IP, server.usuario_ssh, server.contrasena_ssh)
 
+        
         nombre_servidor = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'hostname')
-        nombre_servidor = nombre_servidor.decode('utf-8')
+        if nombre_servidor:
+            nombre_servidor = nombre_servidor.decode('utf-8').strip()
+            if not nombre_servidor:
+                nombre_servidor = "Información no disponible..."
+        else:
+            nombre_servidor = "Información no disponible..."
 
         marca_servidor = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "System Information" | grep -i "Manufacturer" | awk -F\': \' \'{print $2}\'')
-        marca_servidor = marca_servidor.decode('utf-8')
+        if marca_servidor:
+            marca_servidor = marca_servidor.decode('utf-8').strip()
+            if not marca_servidor:
+                marca_servidor = "Información no disponible..."
+        else:
+            marca_servidor = "Información no disponible..."
 
         modelo_servidor = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "System Information" | grep -i "Product Name" | awk -F\': \' \'{print $2}\'')
-        modelo_servidor = modelo_servidor.decode('utf-8')
+        if modelo_servidor:
+            modelo_servidor = modelo_servidor.decode('utf-8').strip()
+            if not modelo_servidor:
+                modelo_servidor = "Información no disponible..."
+        else:
+            modelo_servidor = "Información no disponible..."
 
         bios_version = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "BIOS Information" | grep -i "version" | awk -F\': \' \'{print $2}\'')
-        bios_version = bios_version.decode('utf-8')
-        
+        if bios_version:
+            bios_version = bios_version.decode('utf-8').strip()
+            if not bios_version:
+                bios_version = "Información no disponible..."
+        else:
+            bios_version = "Información no disponible..."
+
+        cpu_name = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo cat /proc/cpuinfo | grep -i "model name" | awk -F\': \' \'{print $2}\' | head -n 1')
+        if cpu_name:
+            cpu_name = cpu_name.decode('utf-8').strip()
+            if not cpu_name:
+                cpu_name = "Información no disponible..."
+        else:
+            cpu_name = "Información no disponible..."
+
+        cpu_cores = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo cat /proc/cpuinfo | grep -i "model name" | awk -F\': \' \'{print $2}\' | wc -l')
+        if cpu_cores:
+            cpu_cores = cpu_cores.decode('utf-8').strip()
+            if not cpu_cores or not cpu_cores.isdigit():
+                cpu_cores = "Información no disponible..."
+        else:
+            cpu_cores = "Información no disponible..."
+
+        gpu_name = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'lspci | grep VGA | awk -F\': \' \'{print $2}\' | awk -F\' [(]\' \'{print $1}\'')
+        if gpu_name:
+            gpu_name = gpu_name.decode('utf-8').strip()
+            if not gpu_name:
+                gpu_name = "Información no disponible..."
+        else:
+            gpu_name = "Información no disponible..."
+
+        ram_type = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 15 "Memory Device$" | grep -i "Type:" | awk -F\': \' \'{print $2}\' | head -n 1')
+        if ram_type:
+            ram_type = ram_type.decode('utf-8').strip()
+            if not ram_type:  
+                ram_type = "Información no disponible..."
+        else:
+            ram_type = "Información no disponible..."
+
+        ram_cap = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo free --giga -h | grep -i "Mem" | awk -F\' \' \'{print $2}\'')
+        if ram_cap:
+            ram_cap = ram_cap.decode('utf-8').strip()
+            if not ram_cap:
+                ram_cap = "Información no disponible..."
+        else:
+            ram_cap = "Información no disponible..."
+
+        ram_in_use = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, ' sudo free --giga -h | grep -i "Mem" | awk -F\' \' \'{print $3}\'')
+        if ram_in_use:
+            ram_in_use = ram_in_use.decode('utf-8').strip()
+            if not ram_in_use:
+                ram_in_use = "Información no disponible..."
+        else:
+            ram_in_use = "Información no disponible..."
+
+        ram_free = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo free --giga -h | grep -i "Mem" | awk -F\' \' \'{print $4}\'')
+        if ram_free:
+            ram_free = ram_free.decode('utf-8').strip()
+            if not ram_free:
+                ram_free = "Información no disponible..."
+        else:
+            ram_free = "Información no disponible..."
+
+        mboard_name = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "Base Board Information" | grep -i "Manufacturer" | awk -F\': \' \'{print $2}\'')
+        if mboard_name:
+            mboard_name = mboard_name.decode('utf-8').strip()
+            if not mboard_name:
+                mboard_name = "Información no disponible..."
+        else:
+            mboard_name = "Información no disponible..."
+
+        mboard_model = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "Base Board Information" | grep -i "Product Name" | awk -F\': \' \'{print $2}\'')
+        if mboard_model:
+            mboard_model = mboard_model.decode('utf-8').strip()
+            if not mboard_model:
+                mboard_model = "Información no disponible..."
+        else:
+            mboard_model = "Información no disponible..."
+
+        ventilation_type = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "Cooling Device" | grep -i "type" | awk -F\': \' \'{print $2}\'')
+        if ventilation_type:
+            ventilation_type = ventilation_type.decode('utf-8').strip()
+            if not ventilation_type:
+                ventilation_type = "Información no disponible..."
+        else:
+            ventilation_type = "Información no disponible..."
+
+        programmed_speed = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "Cooling Device" | grep -i "nominal speed" | awk -F\': \' \'{print $2}\'')
+        if programmed_speed:
+            programmed_speed = programmed_speed.decode('utf-8').strip()
+            if not programmed_speed:
+                programmed_speed = "Información no disponible..."
+        else:
+            programmed_speed = "Información no disponible..."
+
+        ventilation_status = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo dmidecode | grep -A 5 "Cooling Device" | grep -i "status" | awk -F\': \' \'{print $2}\'')
+        if ventilation_status:
+            ventilation_status = ventilation_status.decode('utf-8').strip()
+            if not ventilation_status:
+                ventilation_status = "Información no disponible..."
+        else:
+            ventilation_status = "Información no disponible..."
+
         return render_template(
             'details.html', 
             server=server, 
@@ -229,7 +346,19 @@ def server_details(servers_id):
             nombre_servidor=nombre_servidor,
             marca_servidor=marca_servidor,
             modelo_servidor=modelo_servidor,
-            bios_version=bios_version
+            bios_version=bios_version,
+            cpu_name=cpu_name,
+            cpu_cores=cpu_cores,
+            gpu_name=gpu_name,
+            ram_type=ram_type,
+            ram_cap=ram_cap,
+            ram_in_use=ram_in_use,
+            ram_free=ram_free,
+            mboard_name=mboard_name,
+            mboard_model=mboard_model,
+            ventilation_type=ventilation_type,
+            programmed_speed=programmed_speed,
+            ventilation_status=ventilation_status
         )
 
 @app.route('/manage_service/<int:servers_id>/<string:service>/<string:action>', methods=['POST'])
