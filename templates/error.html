@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Detalles del Servidor</title>
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="wrapper"> 
+    
+      <div id="header"> 
+        <div class="top_banner">
+          <h1>Monitorización de Servidores</h1>
+        </div>
+      </div>
+    
+      <div id="page_content">
+        <div class="content">
+          <div class="left_side_bar"> 
+            <div class="col_1">
+              <h1>Main Menu</h1>  
+              <div class="box">
+                <ul>
+                  {% for servers in servers %}
+                  <li>
+                    <span class="ping-status {{ 'ping-success' if ping_statuses[servers.Nombre] else 'ping-failure' }}"></span>
+                    <a href="{{ url_for('server_details', servers_id=servers.id) }}">{{ servers.Nombre }}</a>
+                    <form action="{{ url_for('delete_server', servers_id=servers.id) }}" method="post">
+                      <button type="button" id="editar" onclick="openEditModal('{{ servers.id }}', '{{ servers.Nombre }}', '{{ servers.IP }}', '{{ servers.usuario_ssh }}')">Editar</button>
+                      <button type="submit" id="eliminar">Eliminar</button>
+                    </form>
+                  </li>
+                  {% endfor %}
+                </ul>
+                <button type="button" onclick="openModal()" id="anadir">+ Añadir Servidor...</button> 
+              </div>
+            </div>
+          </div>
+          <div class="right_side">
+            <div id="top-page">
+              <div><h1>Detalles del Servidor</h1></div>
+            <a href="{{ url_for('index') }}" id="volver-inicio">Volver al inicio</a>
+          </div>
+        </div>
+      </div>
+
+      
+        <div class="modal" id="addServersModal">
+          <div class="modal-content">
+              <span class="close" onclick="closeModal()">&times;</span>
+              <h5 class="modal-title"><b>Añadir Servidor</b></h5><br>
+              <div class="modal-body">
+                  <form method="post">
+                      {{ form.hidden_tag() }}
+                      {{ form.Nombre.label }}: {{ form.Nombre() }}<br><br>
+                      {{ form.IP.label }}: {{ form.IP() }}<br><br>
+                      {{ form.usuario_ssh.label }}: {{ form.usuario_ssh() }}<br><br>
+                      {{ form.contrasena_ssh.label }}: {{ form.contrasena_ssh() }}<br><br>
+                      {{ form.submit() }}
+                  </form>
+              </div>
+          </div>
+        </div>
+        <div id="editServerModal" class="modal">
+          <div class="modal-content">
+              <span class="close" onclick="closeEditModal()">&times;</span>
+              <h5 class="modal-title"><b>Editar Servidor</b></h5><br>
+              <div class="modal-body">
+                  <form id="editServerForm" method="post">
+                      <input type="hidden" id="editServerId" name="server_id">
+                      Nombre: <input type="text" id="editNombre" name="Nombre"><br><br>
+                      IP: <input type="text" id="editIP" name="IP"><br><br>
+                      Usuario SSH: <input type="text" id="editUsuarioSSH" name="usuario_ssh"><br><br>
+                      Contraseña SSH: <input type="password" id="editContraseñaSSH" name="contrasena_ssh"><br><br>
+                      <button type="submit">Guardar Cambios</button>
+                  </form>
+              </div>
+          </div>
+        </div>
+    </div>
+    
+    <script>
+      setTimeout(function(){
+         location.reload();
+      }, 100000);
+    
+        var modal = document.getElementById("addServersModal");
+    
+        function openModal() {
+            modal.style.display = "block";
+        }
+    
+        function closeModal() {
+            modal.style.display = "none";
+        }
+    
+        window.onclick = function(event) {
+          if (event.target == modal) {
+                modal.style.display = "none";
+          }
+        }
+          function openEditModal(serverId, nombre, ip, usuarioSSH) {
+            document.getElementById('editServerId').value = serverId;
+            document.getElementById('editNombre').value = nombre;
+            document.getElementById('editIP').value = ip;
+            document.getElementById('editUsuarioSSH').value = usuarioSSH;
+            document.getElementById('editServerModal').style.display = 'block';
+        }
+
+        function closeChangeIPModal() {
+            var modal = document.getElementById('changeIPModal');
+            modal.style.display = 'none';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editServerModal').style.display = 'none';
+        }
+
+        document.getElementById('editServerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var serverId = document.getElementById('editServerId').value;
+            var data = {
+                'Nombre': document.getElementById('editNombre').value,
+                'IP': document.getElementById('editIP').value,
+                'usuario_ssh': document.getElementById('editUsuarioSSH').value,
+                'contrasena_ssh': document.getElementById('editContraseñaSSH').value
+            };
+            fetch(`/edit/${serverId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Servidor actualizado con exito');
+                    closeEditModal();
+                    location.reload(); 
+                } else {
+                    alert('Error al actualizar el servidor');
+                }
+            });
+        });
+</script>
+
+    </script>
+    </body>
+</html>

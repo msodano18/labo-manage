@@ -41,14 +41,14 @@ def check_ping(host):
     response_time = ping(host)
     server = Servers.query.filter_by(IP=host).first()
     if server:
-        if response_time is None:
-            server.last_offline = datetime.utcnow()
-            db.session.commit()
-            return False
-        else:
+        if isinstance(response_time, float):
             server.last_online = datetime.utcnow()
             db.session.commit()
             return True
+        else:
+            server.last_offline = datetime.utcnow()
+            db.session.commit()
+            return False
     return None
 
 
@@ -116,6 +116,7 @@ def obtener_ip(output, interfaz):
     return "no disponible"
 
 
+
 @socketio.on('run_command')
 def handle_command(json):
     cmd = json['data']
@@ -139,9 +140,15 @@ def index():
         return redirect(url_for('index'))
 
     servers = Servers.query.all()
-    ping_statuses = {server.Nombre: check_ping(server.IP) for server in servers}
+    
+    for server in servers:
+        server.ping_status = check_ping(server.IP)
+        db.session.commit()
+
+    ping_statuses = {server.Nombre: server.ping_status for server in servers}
 
     return render_template('index.html', form=form, servers=servers, ping_statuses=ping_statuses)
+
 
 @app.route('/edit/<int:server_id>', methods=['POST'])
 def edit_server(server_id):
@@ -186,14 +193,17 @@ def server_details(servers_id):
         db.session.commit()
         flash('Servidor añadido con éxito!', 'success')
         return redirect(url_for('server_details', servers_id=servers_id))
-    
+
     servers = Servers.query.all()
     ping_statuses = {server.Nombre: check_ping(server.IP) for server in servers}
+
+    if not check_ping(server.IP):
+        return render_template('error.html', server=server, form=form, ping_statuses=ping_statuses, servers=servers) 
 
     if server:
         sistemaOperativo = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'lsb_release -a')
         if sistemaOperativo is not None:
-            sistemaOperativo = sistemaOperativo.decode('utf-8')
+            sistemaOperativo = sistemaOperativo.decode('utf-8').strip()
         else:
             sistemaOperativo = "Error al conectar con el servidor o ejecutar el comando."
 
@@ -205,7 +215,31 @@ def server_details(servers_id):
 
         interfaces = obtener_interfaces(server.IP, server.usuario_ssh, server.contrasena_ssh)
 
-        
+        espacio_total = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'df -h | grep \' /$\' | awk -F\' \' \'{print $2}\'')
+        if espacio_total is not None:
+            espacio_total = espacio_total.decode('utf-8').strip()
+        else:
+            espacio_total = "Información no disponible..."
+
+        espacio_free = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'df -h | grep \' /$\' | awk -F\' \' \'{print $4}\'')
+        if espacio_free is not None:
+            espacio_free = espacio_free.decode('utf-8').strip()
+        else:
+            espacio_total = "Información no disponible..."
+
+        espacio_usado = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'df -h | grep \' /$\' | awk -F\' \' \'{print $3}\'')
+        if espacio_usado is not None:
+            espacio_usado = espacio_usado.decode('utf-8').strip()
+        else:
+            espacio_usado = "Información no disponible..."
+
+        espacio_porcentaje_usado = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'df -h | grep \' /$\' | awk -F\' \' \'{print $5}\' | tr -d \'%\'')
+        if espacio_porcentaje_usado is not None:
+            espacio_porcentaje_num = float(espacio_porcentaje_usado)
+            espacio_porcentaje_usado = espacio_porcentaje_usado.decode('utf-8').strip()
+        else:
+            espacio_porcentaje_usado = "Información no disponible..."
+
         nombre_servidor = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'hostname')
         if nombre_servidor:
             nombre_servidor = nombre_servidor.decode('utf-8').strip()
@@ -334,6 +368,7 @@ def server_details(servers_id):
         else:
             ventilation_status = "Información no disponible..."
 
+
         return render_template(
             'details.html', 
             server=server, 
@@ -358,7 +393,12 @@ def server_details(servers_id):
             mboard_model=mboard_model,
             ventilation_type=ventilation_type,
             programmed_speed=programmed_speed,
-            ventilation_status=ventilation_status
+            ventilation_status=ventilation_status,
+            espacio_total=espacio_total,
+            espacio_free=espacio_free,
+            espacio_usado=espacio_usado,
+            espacio_porcentaje_usado=espacio_porcentaje_usado,
+            espacio_porcentaje_num=espacio_porcentaje_num
         )
 
 @app.route('/manage_service/<int:servers_id>/<string:service>/<string:action>', methods=['POST'])

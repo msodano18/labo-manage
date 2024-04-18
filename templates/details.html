@@ -15,13 +15,6 @@
       </div>
     
       <div id="page_content">
-    
-        <div class="navigation">
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="#">Racks</a></li>
-          </ul>
-        </div>
         <div class="content">
           <div class="left_side_bar"> 
             <div class="col_1">
@@ -64,71 +57,96 @@
             </div>
             <div id="center-content">
               <div id="left-center-content">
-                <strong>Interfaces de Red</strong>
-                <div>
-                  <ul>
-                      {% for interfaz in interfaces %}
-                          <li>
-                              <div id="networkInterfaces">
-                                <div><p><b>{{ interfaz.nombre }}:</b> {{ interfaz.ip }}</p></div>
-                                <div>
-                                  <button onclick="cambiarIP('{{ server.id }}', '{{ interfaz.nombre }}')" id="boton_ip">Cambiar IP</button>
-                                  <button onclick="cambiarInterfaceName('{{ server.id }}', '{{ interfaz.nombre }}')" id="boton_ip">Cambiar Nombre Interfaz</button>
-                                </div>
-                              </div>
-                          </li>
-                      {% endfor %}
-                  </ul>
-                </div>
-                <div class="toggle-list" id="toggle-list">
-                  <div class="toggle-list-header" id="toggle-list-header" onclick="toggleList()"><span>▶</span><h3>Información del servidor</h3></div>
-                  <div class="toggle-list-items" id="toggle-list-items">
-                      <div><p><strong>Nombre servidor:</strong> {{ nombre_servidor }}</p></div>
-                      <div><p><strong>Marca servidor:</strong> {{ marca_servidor }}</p></div>
-                      <div><p><strong>Modelo servidor:</strong> {{ modelo_servidor }}</p></div>
-                      <div><p><strong>Version BIOS:</strong> {{ bios_version }}</p></div>
+                <div id="secciones">
+                  <strong id="titulos">Espacio disponible</strong>
+                  <div id="espacio-server" class="funciones">
+                    <div><p><strong>Espacio Total:</strong> {{ espacio_total }}</p></div>
+                    <div><p><strong>Espacio Usado:</strong> {{ espacio_usado }}</p></div>
+                    <div><p><strong>Espacio Libre:</strong> {{ espacio_free }}</p></div>
+                    <div id="espacio-barra">
+                      <div id="barra-fondo">
+                        <div style="width: {{ espacio_porcentaje_num }}%;" id="barra">total</div>
+                      </div>
+                      <div id="porcentaje-espacio">
+                        <p>{{ espacio_porcentaje_usado }}%</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="toggle-list1" id="toggle-list">
-                  <div class="toggle-list-header1" id="toggle-list-header" onclick="toggleList1()"><span>▶</span><h3>CPU</h3></div>
-                  <div class="toggle-list-items1" id="toggle-list-items" >
-                      <div><p><strong>Nombre CPU:</strong> {{ cpu_name }}</p></div>
-                      <div><p><strong>Nucleos:</strong> {{ cpu_cores }}</p></div>
+                <div id="secciones">
+                  <strong id="titulos">Interfaces de Red</strong>
+                  <div class="funciones">
+                    <div>
+                      <ul>
+                          {% for interfaz in interfaces %}
+                              <li>
+                                  <div id="networkInterfaces">
+                                    <div><p><strong>{{ interfaz.nombre }}:</strong> {{ interfaz.ip }}</p></div>
+                                    <div>
+                                      <button onclick="cambiarIP('{{ server.id }}', '{{ interfaz.nombre }}')" id="boton_ip">Cambiar IP</button>
+                                      <button onclick="cambiarInterfaceName('{{ server.id }}', '{{ interfaz.nombre }}')" id="boton_ip">Cambiar Nombre Interfaz</button>
+                                    </div>
+                                  </div>
+                              </li>
+                          {% endfor %}
+                      </ul>
+                   </div>
                   </div>
                 </div>
-                <div class="toggle-list2" id="toggle-list">
-                  <div class="toggle-list-header2" id="toggle-list-header" onclick="toggleList2()"><span>▶</span><h3>GPU</h3></div>
-                  <div class="toggle-list-items2" id="toggle-list-items" >
-                    <div><p><strong>Modelo GPU:</strong> {{ gpu_name }}</p></div>
-                  </div>
-                </div>
-                <div class="toggle-list3" id="toggle-list">
-                  <div class="toggle-list-header3" id="toggle-list-header" onclick="toggleList3()"><span>▶</span><h3>RAM</h3></div>
-                  <div class="toggle-list-items3" id="toggle-list-items" >
-                    <div><p><strong>Tipo:</strong> {{ ram_type }}</p></div>
-                    <div><p><strong>Capacidad:</strong> {{ ram_cap }}</p></div>
-                    <div><p><strong>En uso:</strong> {{ ram_in_use }}</p></div>
-                    <div><p><strong>Libre:</strong> {{ ram_free }}</p></div>
-                  </div>
-                </div>
-                <div class="toggle-list4" id="toggle-list">
-                  <div class="toggle-list-header4" id="toggle-list-header" onclick="toggleList4()"><span>▶</span><h3>Base Board</h3></div>
-                  <div class="toggle-list-items4" id="toggle-list-items" >
-                    <div><p><strong>Marca:</strong> {{ mboard_name }}</p></div>
-                    <div><p><strong>Modelo:</strong> {{ mboard_model }}</p></div>
-                  </div>
-                </div>
-                <div class="toggle-list5" id="toggle-list">
-                  <div class="toggle-list-header5" id="toggle-list-header" onclick="toggleList5()"><span>▶</span><h3>Ventilación</h3></div>
-                  <div class="toggle-list-items5" id="toggle-list-items" >
-                    <div><p><strong>Tipo de ventilación:</strong> {{ ventilation_type }}</p></div>
-                    <div><p><strong>Velocidad:</strong> {{ programmed_speed }}</p></div>
-                    <div><p><strong>Estado:</strong> {{ ventilation_status }}</p></div>
+                <div id="secciones">
+                  <strong id="titulos">Componentes del servidor</strong>
+                  <div class="funciones">
+                    <div class="toggle-list" id="toggle-list">
+                      <div class="toggle-list-header" id="toggle-list-header" onclick="toggleList()"><span>▶</span><h3> Información del servidor</h3></div>
+                      <div class="toggle-list-items" id="toggle-list-items">
+                          <div><p><strong>Nombre servidor:</strong> {{ nombre_servidor }}</p></div>
+                          <div><p><strong>Marca servidor:</strong> {{ marca_servidor }}</p></div>
+                          <div><p><strong>Modelo servidor:</strong> {{ modelo_servidor }}</p></div>
+                          <div><p><strong>Version BIOS:</strong> {{ bios_version }}</p></div>
+                      </div>
+                    </div>
+                    <div class="toggle-list1" id="toggle-list">
+                      <div class="toggle-list-header1" id="toggle-list-header" onclick="toggleList1()"><span>▶</span><h3> CPU</h3></div>
+                      <div class="toggle-list-items1" id="toggle-list-items" >
+                          <div><p><strong>Nombre CPU:</strong> {{ cpu_name }}</p></div>
+                          <div><p><strong>Nucleos:</strong> {{ cpu_cores }}</p></div>
+                      </div>
+                    </div>
+                    <div class="toggle-list2" id="toggle-list">
+                      <div class="toggle-list-header2" id="toggle-list-header" onclick="toggleList2()"><span>▶</span><h3> GPU</h3></div>
+                      <div class="toggle-list-items2" id="toggle-list-items" >
+                        <div><p><strong>Modelo GPU:</strong> {{ gpu_name }}</p></div>
+                      </div>
+                    </div>
+                    <div class="toggle-list3" id="toggle-list">
+                      <div class="toggle-list-header3" id="toggle-list-header" onclick="toggleList3()"><span>▶</span><h3> RAM</h3></div>
+                      <div class="toggle-list-items3" id="toggle-list-items" >
+                        <div><p><strong>Tipo:</strong> {{ ram_type }}</p></div>
+                        <div><p><strong>Capacidad:</strong> {{ ram_cap }}</p></div>
+                        <div><p><strong>En uso:</strong> {{ ram_in_use }}</p></div>
+                        <div><p><strong>Libre:</strong> {{ ram_free }}</p></div>
+                      </div>
+                    </div>
+                    <div class="toggle-list4" id="toggle-list">
+                      <div class="toggle-list-header4" id="toggle-list-header" onclick="toggleList4()"><span>▶</span><h3> Base Board</h3></div>
+                      <div class="toggle-list-items4" id="toggle-list-items" >
+                        <div><p><strong>Marca:</strong> {{ mboard_name }}</p></div>
+                        <div><p><strong>Modelo:</strong> {{ mboard_model }}</p></div>
+                      </div>
+                    </div>
+                    <div class="toggle-list5" id="toggle-list">
+                      <div class="toggle-list-header5" id="toggle-list-header" onclick="toggleList5()"><span>▶</span><h3> Ventilación</h3></div>
+                      <div class="toggle-list-items5" id="toggle-list-items" >
+                        <div><p><strong>Tipo de ventilación:</strong> {{ ventilation_type }}</p></div>
+                        <div><p><strong>Velocidad:</strong> {{ programmed_speed }}</p></div>
+                        <div><p><strong>Estado:</strong> {{ ventilation_status }}</p></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="right-center-content">
-                <strong>Servicios</strong>
+                <strong id="titulos">Servicios</strong>
                 <div id="servicios">
                   {% if servicios is string %}
                       <pre>{{ servicios }}</pre>
@@ -153,7 +171,7 @@
                 </div>  
               </div>
             </div>
-            <a href="{{ url_for('index') }}">Volver al inicio</a>
+            <a href="{{ url_for('index') }}" id="volver-inicio">Volver al inicio</a>
           </div>
         </div>
       </div>
@@ -166,10 +184,10 @@
               <div class="modal-body">
                   <form method="post">
                       {{ form.hidden_tag() }}
-                      {{ form.Nombre.label }}: {{ form.Nombre() }}<br><br>
-                      {{ form.IP.label }}: {{ form.IP() }}<br><br>
-                      {{ form.usuario_ssh.label }}: {{ form.usuario_ssh() }}<br><br>
-                      {{ form.contrasena_ssh.label }}: {{ form.contrasena_ssh() }}<br><br>
+                      {{ form.Nombre.label }}: <br>{{ form.Nombre() }}<br><br>
+                      {{ form.IP.label }}: <br>{{ form.IP() }}<br><br>
+                      {{ form.usuario_ssh.label }}: <br>{{ form.usuario_ssh() }}<br><br>
+                      {{ form.contrasena_ssh.label }}: <br>{{ form.contrasena_ssh() }}<br><br>
                       {{ form.submit() }}
                   </form>
               </div>
@@ -182,10 +200,10 @@
               <div class="modal-body">
                   <form id="editServerForm" method="post">
                       <input type="hidden" id="editServerId" name="server_id">
-                      Nombre: <input type="text" id="editNombre" name="Nombre"><br><br>
-                      IP: <input type="text" id="editIP" name="IP"><br><br>
-                      Usuario SSH: <input type="text" id="editUsuarioSSH" name="usuario_ssh"><br><br>
-                      Contraseña SSH: <input type="password" id="editContraseñaSSH" name="contrasena_ssh"><br><br>
+                      Nombre: <br><input type="text" id="editNombre" name="Nombre"><br><br>
+                      IP: <br><input type="text" id="editIP" name="IP"><br><br>
+                      Usuario SSH: <br><input type="text" id="editUsuarioSSH" name="usuario_ssh"><br><br>
+                      Contraseña SSH: <br><input type="password" id="editContraseñaSSH" name="contrasena_ssh"><br><br>
                       <button type="submit">Guardar Cambios</button>
                   </form>
               </div>
@@ -201,7 +219,7 @@
         </div>
         <div id="changeInterfaceNameModal" class="modal">
           <div class="modal-content">
-            <span class="close" onclick="closeChangeIPModal()">&times;</span>
+            <span class="close" onclick="closeChangeInterfaceNameModal()">&times;</span>
             <h5 class="modal-title">Cambiar Nombre Interfaz</h5>
             <input type="text" id="newInterfaceName" placeholder="Nuevo nombre">
             <button onclick="submitNewInterfaceName()" id="boton_ip">Cambiar Nombre Interfaz</button>
@@ -308,6 +326,10 @@
         }
         function closeChangeIPModal() {
             var modal = document.getElementById('changeIPModal');
+            modal.style.display = 'none';
+        }
+        function closeChangeInterfaceNameModal() {
+            var modal = document.getElementById('changeInterfaceNameModal');
             modal.style.display = 'none';
         }
 
