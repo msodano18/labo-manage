@@ -50,10 +50,10 @@
           <div class="modal-body">
               <form method="post">
                   {{ form.hidden_tag() }}
-                  {{ form.Nombre.label }}: {{ form.Nombre() }}<br><br>
-                  {{ form.IP.label }}: {{ form.IP() }}<br><br>
-                  {{ form.usuario_ssh.label }}: {{ form.usuario_ssh() }}<br><br>
-                  {{ form.contrasena_ssh.label }}: {{ form.contrasena_ssh() }}<br><br>
+                  {{ form.Nombre.label }}: <br>{{ form.Nombre() }}<br><br>
+                  {{ form.IP.label }}: <br>{{ form.IP() }}<br><br>
+                  {{ form.usuario_ssh.label }}: <br>{{ form.usuario_ssh() }}<br><br>
+                  {{ form.contrasena_ssh.label }}: <br>{{ form.contrasena_ssh() }}<br><br>
                   {{ form.submit() }}
               </form>
           </div>
