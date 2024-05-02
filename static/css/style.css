@@ -10,8 +10,12 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 	background:none;
 }
 
-h1, h2, h3, h4, h5, h6, li {
+h1, h2, h3, h4, h5, h6, li, pre {
 	line-height:100%;
+	font-family: 'Ubuntu', sans-serif;
+}
+
+button {
 	font-family: 'Ubuntu', sans-serif;
 }
 

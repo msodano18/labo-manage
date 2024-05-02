@@ -51,8 +51,11 @@
                 <strong>Sistema Operativo</strong><pre>{{ sistemaOperativo }}</pre>
               </div>
               <div id="dateInfo">
-                <div id="boxOn"><p id="onDate"><b>Última vez en ON: </b></p><p>{{ server.last_online.strftime('%Y-%m-%d %H:%M:%S') if server.last_online else 'Sin registro' }}</p></div>
-                <div id="boxOff"><p id="offDate"><b>Última vez en OFF: </b></p>{{ server.last_offline.strftime('%Y-%m-%d %H:%M:%S') if server.last_offline else 'Sin registro' }}</p></div>
+                <div id="boxOn"><p id="onDate"><b>Última vez en ON: </b></p>
+                  <p>{{ server.last_online.strftime('%Y-%m-%d %H:%M:%S') if server.last_online else 'Sin registro' }}</p>
+                </div>
+                <div id="boxOff"><p id="offDate"><b>Última vez en OFF: </b></p>
+                  <p>{{ server.last_offline.strftime('%Y-%m-%d %H:%M:%S') if server.last_offline else 'Sin registro' }}</p></div>
               </div>
             </div>
             <div id="center-content">
@@ -97,7 +100,7 @@
                   <strong id="titulos">Componentes del servidor</strong>
                   <div class="funciones">
                     <div class="toggle-list" id="toggle-list">
-                      <div class="toggle-list-header" id="toggle-list-header" onclick="toggleList()"><span>▶</span><h3> Información del servidor</h3></div>
+                      <div class="toggle-list-header" id="toggle-list-header" onclick="toggleList()"><span>▶ </span><h3> Información del servidor</h3></div>
                       <div class="toggle-list-items" id="toggle-list-items">
                           <div><p><strong>Nombre servidor:</strong> {{ nombre_servidor }}</p></div>
                           <div><p><strong>Marca servidor:</strong> {{ marca_servidor }}</p></div>
@@ -106,20 +109,20 @@
                       </div>
                     </div>
                     <div class="toggle-list1" id="toggle-list">
-                      <div class="toggle-list-header1" id="toggle-list-header" onclick="toggleList1()"><span>▶</span><h3> CPU</h3></div>
+                      <div class="toggle-list-header1" id="toggle-list-header" onclick="toggleList1()"><span>▶</span><h3>CPU</h3></div>
                       <div class="toggle-list-items1" id="toggle-list-items" >
                           <div><p><strong>Nombre CPU:</strong> {{ cpu_name }}</p></div>
                           <div><p><strong>Nucleos:</strong> {{ cpu_cores }}</p></div>
                       </div>
                     </div>
                     <div class="toggle-list2" id="toggle-list">
-                      <div class="toggle-list-header2" id="toggle-list-header" onclick="toggleList2()"><span>▶</span><h3> GPU</h3></div>
+                      <div class="toggle-list-header2" id="toggle-list-header" onclick="toggleList2()"><span>▶</span><h3>GPU</h3></div>
                       <div class="toggle-list-items2" id="toggle-list-items" >
                         <div><p><strong>Modelo GPU:</strong> {{ gpu_name }}</p></div>
                       </div>
                     </div>
                     <div class="toggle-list3" id="toggle-list">
-                      <div class="toggle-list-header3" id="toggle-list-header" onclick="toggleList3()"><span>▶</span><h3> RAM</h3></div>
+                      <div class="toggle-list-header3" id="toggle-list-header" onclick="toggleList3()"><span>▶</span><h3>RAM</h3></div>
                       <div class="toggle-list-items3" id="toggle-list-items" >
                         <div><p><strong>Tipo:</strong> {{ ram_type }}</p></div>
                         <div><p><strong>Capacidad:</strong> {{ ram_cap }}</p></div>
@@ -128,14 +131,14 @@
                       </div>
                     </div>
                     <div class="toggle-list4" id="toggle-list">
-                      <div class="toggle-list-header4" id="toggle-list-header" onclick="toggleList4()"><span>▶</span><h3> Base Board</h3></div>
+                      <div class="toggle-list-header4" id="toggle-list-header" onclick="toggleList4()"><span>▶</span><h3>Base Board</h3></div>
                       <div class="toggle-list-items4" id="toggle-list-items" >
                         <div><p><strong>Marca:</strong> {{ mboard_name }}</p></div>
                         <div><p><strong>Modelo:</strong> {{ mboard_model }}</p></div>
                       </div>
                     </div>
                     <div class="toggle-list5" id="toggle-list">
-                      <div class="toggle-list-header5" id="toggle-list-header" onclick="toggleList5()"><span>▶</span><h3> Ventilación</h3></div>
+                      <div class="toggle-list-header5" id="toggle-list-header" onclick="toggleList5()"><span>▶</span><h3>Ventilación</h3></div>
                       <div class="toggle-list-items5" id="toggle-list-items" >
                         <div><p><strong>Tipo de ventilación:</strong> {{ ventilation_type }}</p></div>
                         <div><p><strong>Velocidad:</strong> {{ programmed_speed }}</p></div>

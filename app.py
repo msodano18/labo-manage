@@ -83,8 +83,7 @@ def procesar_servicios(output):
     return servicios
 
 def obtener_interfaces(ip, username, password):
-    comando = "ip addr show"
-    resultado = ssh_connect_and_run(ip, username, password, comando)
+    resultado = ssh_connect_and_run(ip, username, password, 'ip addr show')
     if resultado:
         return procesar_interfaces(resultado.decode('utf-8'))
     else:
