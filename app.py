@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField
@@ -11,6 +11,8 @@ import subprocess
 from datetime import datetime
 import paramiko
 from werkzeug.security import generate_password_hash
+from cryptography.fernet import Fernet
+from config import SECRET_KEY_CIFRADO
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -19,6 +21,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/registro
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+key = SECRET_KEY_CIFRADO
+cipher = Fernet(key)
 
 class Servers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,6 +34,12 @@ class Servers(db.Model):
     last_online = db.Column(db.DateTime, nullable=True)
     last_offline = db.Column(db.DateTime, nullable=True)
 
+class User(db.Model):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+
 
 class ServersForm(FlaskForm):
     Nombre = StringField('Nombre', validators=[DataRequired()])
@@ -36,6 +47,25 @@ class ServersForm(FlaskForm):
     usuario_ssh = StringField('Usuario SSH', validators=[DataRequired()])
     contrasena_ssh = PasswordField('Contraseña SSH', validators=[DataRequired()])
     submit = SubmitField('Añadir')
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+
+def create_user(username, password):
+    encrypted_password = cipher.encrypt(password.encode()).decode('utf-8')
+    user = User(username=username, password_hash=encrypted_password)
+    db.session.add(user)
+    db.session.commit()
+
+def create_default_user():
+    existing_user = User.query.filter_by(username='admin').first()
+    if not existing_user:
+        create_user('admin', 'admin')
+        print("Usuario 'admin' creado con éxito")
+    else:
+        print("Usuario 'admin' ya existe")
 
 def check_ping(host):
     response_time = ping(host)
@@ -52,7 +82,8 @@ def check_ping(host):
     return None
 
 
-def ssh_connect_and_run(ip, username, password, command):
+def ssh_connect_and_run(ip, username, encrypted_password, command):
+    password = decrypt_password(encrypted_password)
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -114,7 +145,14 @@ def obtener_ip(output, interfaz):
                             return ip
     return "no disponible"
 
+def encrypt_password(password):
+    encrypted = cipher.encrypt(password.encode())
+    return encrypted.decode('utf-8')   
 
+def decrypt_password(encrypted_password):
+    encrypted = encrypted_password.encode('utf-8')
+    decrypted = cipher.decrypt(encrypted)
+    return decrypted.decode()
 
 @socketio.on('run_command')
 def handle_command(json):
@@ -128,11 +166,15 @@ def handle_command(json):
     
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 def index():
     form = ServersForm()
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para acceder a esta página.')
+        return redirect(url_for('login'))
     if form.validate_on_submit():
-        server = Servers(Nombre=form.Nombre.data, IP=form.IP.data, usuario_ssh=form.usuario_ssh.data, contrasena_ssh=form.contrasena_ssh.data)
+        encrypted_password = encrypt_password(form.contrasena_ssh.data)
+        server = Servers(Nombre=form.Nombre.data, IP=form.IP.data, usuario_ssh=form.usuario_ssh.data, contrasena_ssh=encrypted_password)
         db.session.add(server)
         db.session.commit()
         flash('Servidor añadido con éxito!', 'success')
@@ -148,9 +190,27 @@ def index():
 
     return render_template('index.html', form=form, servers=servers, ping_statuses=ping_statuses)
 
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and cipher.decrypt(user.password_hash.encode('utf-8')).decode() == form.password.data:
+            session['user_id'] = user.id
+            flash('Has iniciado sesión con éxito!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Usuario o contraseña incorrectos', 'danger')
+    return render_template('login.html', form=form)
+
+
+
 
 @app.route('/edit/<int:server_id>', methods=['POST'])
 def edit_server(server_id):
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para acceder a esta página.')
+        return redirect(url_for('login'))
     data = request.get_json()
     server = Servers.query.get_or_404(server_id)
 
@@ -158,7 +218,8 @@ def edit_server(server_id):
     server.IP = data['IP']
     server.usuario_ssh = data['usuario_ssh']
     if 'contrasena_ssh' in data and data['contrasena_ssh']:
-        server.contrasena_ssh = generate_password_hash(data['contrasena_ssh'])
+        encrypted_password = cipher.encrypt(data['contrasena_ssh'].encode())
+        server.contrasena_ssh = encrypted_password.decode('utf-8')
 
     db.session.commit()
 
@@ -167,6 +228,9 @@ def edit_server(server_id):
 
 @app.route('/delete/<int:servers_id>', methods=['POST'])
 def delete_server(servers_id):
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para acceder a esta página.')
+        return redirect(url_for('login'))
     servers = Servers.query.get(servers_id)
     if servers:
         db.session.delete(servers)
@@ -178,15 +242,19 @@ def delete_server(servers_id):
 
 @app.route('/details/<int:servers_id>', methods=['GET', 'POST'])
 def server_details(servers_id):
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para acceder a esta página.')
+        return redirect(url_for('login'))
     server = Servers.query.get(servers_id)
     form = ServersForm()
 
     if form.validate_on_submit():
+        encrypted_password = encrypt_password(form.contrasena_ssh.data)
         new_server = Servers(
             Nombre=form.Nombre.data, 
             IP=form.IP.data, 
             usuario_ssh=form.usuario_ssh.data,
-            contrasena_ssh=form.contrasena_ssh.data
+            contrasena_ssh=encrypted_password
         )
         db.session.add(new_server)
         db.session.commit()
@@ -402,6 +470,9 @@ def server_details(servers_id):
 
 @app.route('/manage_service/<int:servers_id>/<string:service>/<string:action>', methods=['POST'])
 def manage_service(servers_id, service, action):
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para acceder a esta página.')
+        return redirect(url_for('login'))
     server = Servers.query.get(servers_id)
     if server:
         comando = f"sudo /etc/init.d/{service} {action}"
@@ -415,6 +486,9 @@ def manage_service(servers_id, service, action):
 
 @app.route('/change_ip/<int:server_id>/<string:interface>/<string:new_ip>', methods=['POST'])
 def change_ip(server_id, interface, new_ip):
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para acceder a esta página.')
+        return redirect(url_for('login'))
     server = Servers.query.get(server_id)
     if not server:
         return jsonify({'status': 'error', 'message': 'Servidor no encontrado'})
@@ -429,6 +503,9 @@ def change_ip(server_id, interface, new_ip):
 
 @app.route('/change_interface_name/<int:server_id>/<string:interface>/<string:new_interface_name>', methods=['POST'])
 def change_interface_name(server_id, interface, new_interface_name):
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para acceder a esta página.')
+        return redirect(url_for('login'))
     server = Servers.query.get(server_id)
     if not server:
         return jsonify({'status': 'error', 'message': 'Servidor no encontrado'})
@@ -442,7 +519,10 @@ def change_interface_name(server_id, interface, new_interface_name):
         return jsonify({'status': 'error', 'message': 'Error al cambiar el nombre de la intefaz'})
 
 @app.route('/shutdown/<int:server_id>', methods=['POST'])
-def shutdown_server(server_id):
+def shutdown_server(server_id): 
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para acceder a esta página.')
+        return redirect(url_for('login'))
     server = Servers.query.get(server_id)
     if server:
         resultado = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo shutdown now')
@@ -455,6 +535,9 @@ def shutdown_server(server_id):
 
 @app.route('/reboot/<int:server_id>', methods=['POST'])
 def reboot_server(server_id):
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para acceder a esta página.')
+        return redirect(url_for('login'))
     server = Servers.query.get(server_id)
     if server:
         resultado = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo reboot')
@@ -464,4 +547,6 @@ def reboot_server(server_id):
 
 
 if __name__ == "__main__":
+    with app.app_context():
+        create_default_user()
     app.run(debug=True, host='0.0.0.0')

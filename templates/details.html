@@ -180,22 +180,22 @@
       </div>
 
       
-        <div class="modal" id="addServersModal">
-          <div class="modal-content">
-              <span class="close" onclick="closeModal()">&times;</span>
-              <h5 class="modal-title"><b>Añadir Servidor</b></h5><br>
-              <div class="modal-body">
-                  <form method="post">
-                      {{ form.hidden_tag() }}
-                      {{ form.Nombre.label }}: <br>{{ form.Nombre() }}<br><br>
-                      {{ form.IP.label }}: <br>{{ form.IP() }}<br><br>
-                      {{ form.usuario_ssh.label }}: <br>{{ form.usuario_ssh() }}<br><br>
-                      {{ form.contrasena_ssh.label }}: <br>{{ form.contrasena_ssh() }}<br><br>
-                      {{ form.submit() }}
-                  </form>
-              </div>
-          </div>
+      <div class="modal" id="addServersModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h5 class="modal-title"><b>Añadir Servidor</b></h5><br>
+            <div class="modal-body">
+                <form method="post">
+                    {{ form.hidden_tag() }}
+                    {{ form.Nombre.label }}: <br>{{ form.Nombre() }}<br><br>
+                    {{ form.IP.label }}: <br>{{ form.IP() }}<br><br>
+                    {{ form.usuario_ssh.label }}: <br>{{ form.usuario_ssh() }}<br><br>
+                    {{ form.contrasena_ssh.label }}: <br>{{ form.contrasena_ssh() }}<br><br>
+                    {{ form.submit() }}
+                </form>
+            </div>
         </div>
+      </div>
         <div id="editServerModal" class="modal">
           <div class="modal-content">
               <span class="close" onclick="closeEditModal()">&times;</span>
