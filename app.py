@@ -40,7 +40,6 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
 
-
 class ServersForm(FlaskForm):
     Nombre = StringField('Nombre', validators=[DataRequired()])
     IP = StringField('IP', validators=[DataRequired()])
@@ -52,6 +51,11 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+class UserForm(FlaskForm):
+    username = StringField('Nombre de usuario', validators=[DataRequired()])
+    password = PasswordField('Contraseña', validators=[DataRequired()])
+    submit = SubmitField('Añadir usuario')
 
 def create_user(username, password):
     encrypted_password = cipher.encrypt(password.encode()).decode('utf-8')
@@ -163,8 +167,6 @@ def handle_command(json):
     except subprocess.CalledProcessError as e:
         emit('command_output', {'data': str(e)})
     
-    
-
 
 @app.route('/home', methods=['GET', 'POST'])
 def index():
@@ -203,6 +205,32 @@ def login():
             flash('Usuario o contraseña incorrectos', 'danger')
     return render_template('login.html', form=form)
 
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión para acceder a esta página.', 'warning')
+        return redirect(url_for('login'))
+    form = UserForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        encrypted_password = encrypt_password(password) 
+        user = User(username=username, password_hash=encrypted_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Usuario añadido con éxito', 'success')
+        return redirect(url_for('settings'))
+
+    users = User.query.all()
+    return render_template('settings.html', form=form, users=users)
+
+@app.route('/delete_user/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('Usuario eliminado con éxito', 'success')
+    return redirect(url_for('settings'))
 
 
 
@@ -543,8 +571,6 @@ def reboot_server(server_id):
         resultado = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'sudo reboot')
     else:
         return jsonify({'status': 'error', 'message': 'Servidor no encontrado'})
-
-
 
 if __name__ == "__main__":
     with app.app_context():
