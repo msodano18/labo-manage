@@ -117,6 +117,40 @@ h6 {
 	padding:75px 95px 0 20px;
 }
 
+.login{
+	height: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+}
+
+.login_box{
+	display: flex;
+	background:#333333;
+	border: 2px solid #363636;
+	border-radius: 20px;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.7);
+	height: 250px;
+	width: 500px;
+	padding: 20px;
+	align-items: center;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.login_form input{
+	padding: 5px;
+	border-radius: 10px;
+	background-color: #2c2c2c;
+	border: 2px solid #AEA79F;
+	color: #FFFFFF;
+}
+.login_form input:hover{
+	background-color: #363636;
+	border: 2px solid #E95420;
+	color: #FFFFFF;
+}
 
 .top_banner h1{
 	font-size:32px;
@@ -158,6 +192,19 @@ h6 {
 	margin-bottom:20px;
 }
 
+#page_content2{
+	background:#333333;
+	border: 2px solid #363636;
+	padding: 50px;
+	border-radius: 20px;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.7);
+	width: 392px;
+}
+#page_container{
+	display: flex;
+	justify-content: space-between;
+	width: 1000px;
+}
 .common_content{
 	padding:0 0 20px 0;
 }

@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+<meta charset="UTF-8">
+<title>Login</title>
+<link href="/static/css/style.css" rel="stylesheet" type="text/css">
 </head>
-<body>
-    <h1>Login</h1>
-    <form method="POST" action="{{ url_for('login') }}">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+<body class="login">
+    <div class="login_box">
+        <h1>Login</h1>
+        <form method="POST" action="{{ url_for('login') }}" class="login_form">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.username.label }}<br>
+                {{ form.username(size=32) }}<br><br>
+            </p>
+            <p>
+                {{ form.password.label }}<br>
+                {{ form.password(size=32) }}<br><br>
+            </p>
+            <p>{{ form.submit() }}</p>
+        </form>
+    </div>
 </body>
 </html>
