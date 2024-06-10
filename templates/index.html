@@ -37,16 +37,63 @@
           </div>
         </div>
       </div>
-      <div class="right-side">
-        <div>        
-          <h1>Este es mi TFG</h1>
-          <p>Marco Sodano Ballestero</p>
+      <div class="right_side">
+        <div class="right-side-title">
+          <div>        
+            <h1>Resumen monitorización</h1>
+          </div>
+          <div>
+            <a href="{{ url_for('settings') }}"><img src="{{ url_for('static', filename='../static/images/ajustes.png') }}" alt="Ajustes" height="25" width="25" id="ajustes"></a>
+          </div>
         </div>
-        <div>
-          <a href="{{ url_for('settings') }}"><img src="{{ url_for('static', filename='../static/images/ajustes.png') }}" alt="Ajustes" height="25" width="25" id="ajustes"></a>
-        </div>
+        <div class="panel">
+          <div class="panel-box">
+            <div>
+              Total Servidores: <a> {{ total_servers }}</a>
+            </div>
+            <div class="on-off-stat">
+              <div class="box-stat-container">
+                <div id="box-stat" class="box-on">
+                  <div>{{ servers_on }}</div>
+                </div>
+                ON
+              </div>
+              <div class="box-stat-container">
+                <div id="box-stat" class="box-off">
+                  <div>{{ servers_off }}</div>
+                </div>
+                OFF
+              </div>
+            </div>
+          </div>
+          <div class="panel-box">
+            {% if servidores_con_espacio_lleno %}
+              <div style="color: red;">
+                <strong>Alerta:</strong> Espacio casi lleno en:
+                <ul>
+                  {% for servidor in servidores_con_espacio_lleno %}
+                    <li>{{ servidor }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% else %}
+              <div>
+                No hay servidores con espacio lleno.
+              </div>
+            {% endif %}
+          </div>
+          <div class="panel-box">    
+          </div>
+          <div class="panel-box">    
+          </div>
+          <div class="panel-box">    
+          </div>
+          <div class="panel-box">    
+          </div>
       </div>
     </div>
+    </div>
+  </div>
 
     <div class="modal" id="addServersModal">
       <div class="modal-content">

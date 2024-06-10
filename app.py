@@ -11,7 +11,7 @@ import subprocess
 from datetime import datetime
 import paramiko
 from werkzeug.security import generate_password_hash
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, InvalidToken
 from config import SECRET_KEY_CIFRADO
 
 app = Flask(__name__)
@@ -87,7 +87,15 @@ def check_ping(host):
 
 
 def ssh_connect_and_run(ip, username, encrypted_password, command):
-    password = decrypt_password(encrypted_password)
+    try:
+        password = decrypt_password(encrypted_password)
+    except InvalidToken:
+        print(f"Error: No se pudo descifrar la contraseña para el servidor {ip}")
+        return None
+    except Exception as e:
+        print(f"Error inesperado al descifrar la contraseña para el servidor {ip}: {e}")
+        return None
+
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -101,6 +109,7 @@ def ssh_connect_and_run(ip, username, encrypted_password, command):
     except Exception as e:
         print(f"Error de conexión SSH: {e}")
         return None
+
 
 def procesar_servicios(output):
     servicios = []
@@ -184,13 +193,31 @@ def index():
 
     servers = Servers.query.all()
     
+    total_servers = len(servers)
+    servers_on = 0
+    servers_off = 0
+    servidores_con_espacio_lleno = []
+
     for server in servers:
+        if check_ping(server.IP):
+            servers_on += 1
+            espacio_porcentaje_usado = ssh_connect_and_run(server.IP, server.usuario_ssh, server.contrasena_ssh, 'df -h | grep \' /$\' | awk \'{print $5}\' | tr -d \'%\'')
+            if espacio_porcentaje_usado:
+                espacio_porcentaje_usado = espacio_porcentaje_usado.decode('utf-8').strip()
+                if espacio_porcentaje_usado and float(espacio_porcentaje_usado) > 90:
+                    servidores_con_espacio_lleno.append(server.Nombre)
+        else:
+            servers_off += 1
+
         server.ping_status = check_ping(server.IP)
         db.session.commit()
 
     ping_statuses = {server.Nombre: server.ping_status for server in servers}
 
-    return render_template('index.html', form=form, servers=servers, ping_statuses=ping_statuses)
+    return render_template('index.html', form=form, servers=servers, ping_statuses=ping_statuses, total_servers=total_servers, servers_on=servers_on, servers_off=servers_off, servidores_con_espacio_lleno=servidores_con_espacio_lleno)
+
+
+
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
