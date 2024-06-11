@@ -353,6 +353,32 @@ h6 {
 .box-off{
 	background-color: #d80000;
 }
+.alert-box{
+	display: flex;
+	justify-content: space-between;
+	height: 100%;
+	margin-right: 20px;
+}
+.alert-box ul{
+	list-style-type: none;
+	color: #FFFFFF;
+}
+.alert-box strong{
+	font-size: large;
+	color: #ee9f22;
+}
+.alert-box a{
+	font-size: large;
+	color: #E95420; 
+}
+.alert-box p{
+	color: #FFFFFF;
+}
+.img-alert{
+	display: flex;
+	height: 100%;
+	align-items: center;
+}
 .modal {
     display: none;
     position: fixed;

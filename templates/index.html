@@ -68,18 +68,33 @@
           </div>
           <div class="panel-box">
             {% if servidores_con_espacio_lleno %}
-              <div style="color: red;">
-                <strong>Alerta:</strong> Espacio casi lleno en:
-                <ul>
-                  {% for servidor in servidores_con_espacio_lleno %}
-                    <li>{{ servidor }}</li>
-                  {% endfor %}
-                </ul>
+              <div class="alert-box">
+                <div>
+                  <strong>¡ALERTA!</strong> <br>Espacio casi lleno en:
+                  <ul>
+                    {% for servidor in servidores_con_espacio_lleno %}
+                      <li>- {{ servidor }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                <div class="img-alert">
+                  <div>
+                    <img src="../static/images/alerta.png" alt="alert" height="100" width="100">
+                  </div>
+                </div>
               </div>
             {% else %}
+            <div class="alert-box">
               <div>
-                No hay servidores con espacio lleno.
+                <a>Todo correcto</a> 
+                <p>No hay servidores con espacio lleno</p>
               </div>
+              <div class="img-alert">
+                <div>
+                  <img src="../static/images/check.png" alt="alert" height="100" width="100">
+                </div>
+              </div>
+            </div>
             {% endif %}
           </div>
           <div class="panel-box">    
