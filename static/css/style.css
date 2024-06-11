@@ -305,6 +305,17 @@ h6 {
     font-weight: bold;
 	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.7);
 }
+.panel-box1{
+	height: 200px;
+	width: 100%;
+	margin-bottom: 20px;
+    background-color: #333333;
+    border-radius: 10px; 
+    padding: 10px;
+    color: #E95420; 
+    font-weight: bold;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.7);
+}
 .panel-box a {
     color: #ffffff; 
 }
@@ -378,6 +389,74 @@ h6 {
 	display: flex;
 	height: 100%;
 	align-items: center;
+}
+.title-test{
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+.panel-box1 p{
+	font-size: large;
+	text-align: center;
+}
+.test-select{
+	margin-top: 30px;
+	display: flex;
+	justify-content: space-between;
+	margin-right: 75px;
+	margin-left: 75px;
+}
+.iperf-select{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+.iperf-button{
+	display: flex;
+	justify-content: center;
+}
+.iperf-button button{
+	border: none; 
+	color: white;
+	background-color: #E95420; 
+	padding: 10px 10px; 
+	cursor: pointer; 
+	border-radius: 7px;
+	margin-left: 2px;
+}
+.iperf-button button:hover{
+	background-color: #AEA79F;
+}
+.iperf-result{
+	margin-top: 15px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+.panel-box1 select {
+    padding: 5px;
+    border-radius: 10px;
+    background-color: #2c2c2c;
+    border: 2px solid #AEA79F;
+    color: #FFFFFF;
+    font-family: 'Ubuntu', sans-serif;
+    width: 100%;
+}
+.panel-box1 option {
+    padding: 5px;
+    background-color: #2c2c2c;
+    color: #FFFFFF;
+    font-family: 'Ubuntu', sans-serif;
+}
+.panel-box1 option:hover {
+    background-color: #363636;
+    color: #FFFFFF;
+}
+.panel-box1 select:hover, .panel-box1 select:focus {
+    border-color: #E95420;
+    outline: none;
 }
 .modal {
     display: none;

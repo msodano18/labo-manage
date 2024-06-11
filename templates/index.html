@@ -49,7 +49,7 @@
         <div class="panel">
           <div class="panel-box">
             <div>
-              Total Servidores: <a> {{ total_servers }}</a>
+              Total servidores: <a> {{ total_servers }}</a>
             </div>
             <div class="on-off-stat">
               <div class="box-stat-container">
@@ -97,14 +97,34 @@
             </div>
             {% endif %}
           </div>
-          <div class="panel-box">    
-          </div>
-          <div class="panel-box">    
-          </div>
-          <div class="panel-box">    
-          </div>
-          <div class="panel-box">    
-          </div>
+          <div class="panel-box1">  
+            <div class="title-test"><p>Test de velocidad</p></div>
+            <div class="iperf-test">
+              <div class="test-select">
+                <div class="iperf-select">
+                  <label for="server-left">Servidor 1:</label>
+                  <select id="server-left">
+                    {% for server in servers %}
+                    <option value="{{ server.id }}">{{ server.Nombre }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="iperf-select">
+                  <label for="server-right">Servidor 2:</label>
+                  <select id="server-right">
+                    {% for server in servers %}
+                    <option value="{{ server.id }}">{{ server.Nombre }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+             </div>
+              <div class="iperf-button">
+                <button onclick="runIperfTest()">INICIAR TEST</button>
+              </div>
+              <div class="iperf-result" id="iperf-result">
+                <div><a id="iperf-status"></a></div>
+              </div>
+            </div>
       </div>
     </div>
     </div>
@@ -205,6 +225,26 @@
                 }
             });
         });
+        function runIperfTest() {
+            var serverLeft = document.getElementById('server-left').value;
+            var serverRight = document.getElementById('server-right').value;
+            document.getElementById('iperf-status').innerText = 'Ejecutando test...';
+            fetch('/run_iperf_test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({server_left: serverLeft, server_right: serverRight})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('iperf-status').innerHTML = '<div style="text-align: center;">Resultado del test:<br><span style="color: white;">' + data.result + '</span></div>';
+                } else {
+                    document.getElementById('iperf-status').innerText = 'No ha sido posible ejecutar el test ';
+                }
+            });
+        }
 
 </script>
 </body></html>
