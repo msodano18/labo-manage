@@ -309,14 +309,12 @@ def run_iperf_test():
     
     if not server_left or not server_right:
         return jsonify({'status': 'error', 'message': 'Servidor no encontrado.'})
-    
-    # Start iperf3 server on the left server
+
     start_iperf_command = 'iperf3 -s -p 6000 &'
     result_left = ssh_connect_and_run(server_left.IP, server_left.usuario_ssh, server_left.contrasena_ssh, start_iperf_command)
     if result_left is None:
         return jsonify({'status': 'error', 'message': 'Error al iniciar iperf3 en el servidor de la izquierda.'})
     
-    # Run iperf3 client on the right server
     iperf_test_command = f'iperf3 -c {server_left.IP} -p 6000 | grep "receiver" | awk \'{{print $7, $8}}\''
     result_right = ssh_connect_and_run(server_right.IP, server_right.usuario_ssh, server_right.contrasena_ssh, iperf_test_command)
     if result_right is None:

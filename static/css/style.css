@@ -100,7 +100,6 @@ h6 {
 	padding:20px 0 10px 0;
 }
 
-/*----start header----*/
 #header {
 	padding:0px 0px 5px;
 	display: flex;
@@ -508,7 +507,9 @@ h6 {
     font-size: 28px;
     font-weight: bold;
 }
-
+#intro strong{
+	color: #E95420;
+}
 #reboot{
 	cursor: pointer;
 }
@@ -708,4 +709,3 @@ h6 {
 .funciones strong{
 	color: #E95420;
 }
-/*----end footer content----*/
